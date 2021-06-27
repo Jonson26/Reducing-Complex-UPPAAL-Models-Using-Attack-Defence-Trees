@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+const int N = 6; //amount of voters
+const int candidates = 2; //amount of candidates
+int voters_vote, coercion;
+
+chan ballot, vote;</declaration><template><name x="5" y="5">Voter</name><parameter>const int me</parameter><declaration>// Place local declarations here.
+</declaration><location id="id0" x="8" y="-24"><name x="-80" y="-40">Has_Voted</name></location><location id="id1" x="8" y="-144"><name x="-80" y="-152">Has_Ballot</name></location><location id="id2" x="8" y="-256"><name x="-40" y="-272">Start</name></location><init ref="id2"/><transition><source ref="id1"/><target ref="id0"/><label kind="select" x="16" y="-120">i: int[0, candidates-1]</label><label kind="synchronisation" x="16" y="-104">vote!</label><label kind="assignment" x="16" y="-88">voters_vote = i</label></transition><transition><source ref="id2"/><target ref="id1"/><label kind="synchronisation" x="16" y="-216">ballot?</label></transition></template><template><name>Authority</name><declaration>int voted = N-1;
+int tally[candidates];
+
+void vote_update(){
+	voted++;
+	tally[voters_vote]++;
+}</declaration><location id="id3" x="-40" y="-40"><name x="-128" y="-64">after_voting</name></location><location id="id4" x="-40" y="-152"><name x="-168" y="-168">voting_execution</name></location><location id="id5" x="-40" y="-264"><name x="-176" y="-280">voting_preparation</name></location><init ref="id5"/><transition><source ref="id4"/><target ref="id4"/><label kind="synchronisation" x="8" y="-168">vote?</label><label kind="assignment" x="8" y="-152">vote_update()</label><nail x="0" y="-168"/><nail x="0" y="-136"/></transition><transition><source ref="id5"/><target ref="id5"/><label kind="guard" x="8" y="-287">voted &gt; 0</label><label kind="synchronisation" x="8" y="-272">ballot!</label><label kind="assignment" x="8" y="-257">voted--</label><nail x="0" y="-280"/><nail x="0" y="-248"/></transition><transition><source ref="id4"/><target ref="id3"/><label kind="guard" x="-112" y="-120">voted == N</label></transition><transition><source ref="id5"/><target ref="id4"/><label kind="guard" x="-112" y="-240">voted == 0</label><label kind="synchronisation" x="-88" y="-224">ballot!</label></transition></template><system>// Place template instantiations here.
+Auth = Authority();
+
+V0 = Voter(0);
+V1 = Voter(1);
+V2 = Voter(2);
+V3 = Voter(3);
+V4 = Voter(4);
+V5 = Voter(5);
+
+// List one or more processes to be composed into a system.
+system Auth, V0, V1, V2, V3, V4, V5;</system></nta>

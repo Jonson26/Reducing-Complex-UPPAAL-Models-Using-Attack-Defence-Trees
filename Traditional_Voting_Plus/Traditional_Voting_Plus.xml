@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+const int N = 16; //amount of voters
+const int candidates = 4; //amount of candidates
+
+typedef int[0, N-1] voter_id;
+
+int voters_vote, coercion;
+
+chan ballot, vote, vote_end, coerce[N], punish[N], leavebe[N], requestvote[N];</declaration><template><name x="5" y="5">Voter</name><parameter>const voter_id me</parameter><declaration>//Actions START
+const bool vote_as_told = true;
+const bool vote_yourself = true;
+//Actions STOP
+
+// Place local declarations here.
+int preferredcandidate = -1;
+int mycoercion = -1;
+int myvote = -1;
+
+void dovote(int v){
+	myvote = v;
+	voters_vote = v;
+}</declaration><location id="id0" x="48" y="208"><name x="64" y="192">not_punished</name></location><location id="id1" x="-80" y="208"><name x="-152" y="192">punished</name></location><location id="id2" x="-16" y="112"><name x="-144" y="96">awaiting_reaction</name></location><location id="id3" x="208" y="-208"><name x="232" y="-224">waiting_for_ballot_coerced</name></location><location id="id4" x="-16" y="-208"><name x="-144" y="-224">Waiting_for_ballot</name></location><location id="id5" x="-16" y="16"><name x="-104" y="0">Has_Voted</name></location><location id="id6" x="-16" y="-112"><name x="-104" y="-120">Has_Ballot</name></location><location id="id7" x="-16" y="-304"><name x="-64" y="-320">Start</name><committed/></location><init ref="id7"/><transition><source ref="id2"/><target ref="id0"/><label kind="synchronisation" x="24" y="144">leavebe[me]?</label></transition><transition><source ref="id2"/><target ref="id1"/><label kind="synchronisation" x="-128" y="144">punish[me]?</label></transition><transition><source ref="id5"/><target ref="id2"/><label kind="synchronisation" x="-128" y="40">requestvote[me]?</label><label kind="assignment" x="-160" y="55">voters_vote = myvote</label></transition><transition><source ref="id6"/><target ref="id5"/><label kind="guard" x="8" y="-80">vote_as_told &amp;&amp; mycoercion &gt; -1</label><label kind="synchronisation" x="8" y="-64">vote!</label><label kind="assignment" x="8" y="-48">dovote(mycoercion)</label><nail x="0" y="-80"/><nail x="0" y="-16"/></transition><transition><source ref="id3"/><target ref="id6"/><label kind="synchronisation" x="216" y="-176">ballot?</label><nail x="208" y="-112"/></transition><transition><source ref="id4"/><target ref="id3"/><label kind="synchronisation" x="48" y="-248">coerce[me]?</label><label kind="assignment" x="16" y="-232">mycoercion = coercion</label></transition><transition><source ref="id7"/><target ref="id4"/><label kind="select" x="-152" y="-280">i: int[0, candidates-1]</label><label kind="assignment" x="-160" y="-264">preferredcandidate = i</label></transition><transition><source ref="id6"/><target ref="id5"/><label kind="guard" x="-128" y="-80">vote_yourself</label><label kind="synchronisation" x="-72" y="-64">vote!</label><label kind="assignment" x="-208" y="-48">dovote(preferredcandidate)</label><nail x="-32" y="-80"/><nail x="-32" y="-16"/></transition><transition><source ref="id4"/><target ref="id6"/><label kind="synchronisation" x="-8" y="-176">ballot?</label></transition></template><template><name>Authority</name><declaration>int voted = N-1;
+int tally[candidates];
+
+void vote_update(){
+	voted++;
+	tally[voters_vote]++;
+}</declaration><location id="id8" x="-40" y="-40"><name x="-128" y="-64">after_voting</name></location><location id="id9" x="-40" y="-152"><name x="-168" y="-168">voting_execution</name></location><location id="id10" x="-40" y="-264"><name x="-176" y="-280">voting_preparation</name></location><init ref="id10"/><transition><source ref="id9"/><target ref="id9"/><label kind="synchronisation" x="8" y="-168">vote?</label><label kind="assignment" x="8" y="-152">vote_update()</label><nail x="0" y="-168"/><nail x="0" y="-136"/></transition><transition><source ref="id10"/><target ref="id10"/><label kind="guard" x="8" y="-287">voted &gt; 0</label><label kind="synchronisation" x="8" y="-272">ballot!</label><label kind="assignment" x="8" y="-257">voted--</label><nail x="0" y="-280"/><nail x="0" y="-248"/></transition><transition><source ref="id9"/><target ref="id8"/><label kind="guard" x="-112" y="-120">voted == N</label><label kind="synchronisation" x="-104" y="-104">vote_end!</label></transition><transition><source ref="id10"/><target ref="id9"/><label kind="guard" x="-112" y="-240">voted == 0</label><label kind="synchronisation" x="-88" y="-224">ballot!</label></transition></template><template><name>Coercer</name><declaration>int c;
+int coercedid[N];
+
+int coerced = 0;
+
+void coercevoter(int id){
+	coercedid[coerced] = id;
+	coercion = c;
+	coerced++;
+}</declaration><location id="id11" x="-16" y="208"><name x="-152" y="192">choosing_feedback</name><committed/></location><location id="id12" x="-16" y="48"><name x="-208" y="40">checking_voter_compliance</name></location><location id="id13" x="-16" y="-48"><name x="-80" y="-64">coecing</name></location><location id="id14" x="-16" y="-144"><name x="-32" y="-176">start</name><committed/></location><init ref="id14"/><transition><source ref="id13"/><target ref="id12"/><label kind="synchronisation" x="-80" y="-16">vote_end?</label></transition><transition><source ref="id11"/><target ref="id12"/><label kind="guard" x="232" y="96">voters_vote != c</label><label kind="synchronisation" x="232" y="112">punish[coercedid[coerced-1]]!</label><label kind="assignment" x="232" y="128">coerced--</label><nail x="224" y="192"/><nail x="224" y="64"/></transition><transition><source ref="id11"/><target ref="id12"/><label kind="guard" x="24" y="96">voters_vote == c</label><label kind="synchronisation" x="24" y="112">leavebe[coercedid[coerced-1]]!</label><label kind="assignment" x="24" y="128">coerced--</label><nail x="16" y="192"/><nail x="16" y="64"/></transition><transition><source ref="id12"/><target ref="id11"/><label kind="guard" x="-96" y="104">coerced &gt; 0</label><label kind="synchronisation" x="-232" y="120">requestvote[coercedid[coerced-1]]!</label></transition><transition><source ref="id13"/><target ref="id13"/><label kind="select" x="72" y="-72">i: int[0, N-1]</label><label kind="synchronisation" x="72" y="-56">coerce[i]!</label><label kind="assignment" x="72" y="-40">coercevoter(i)</label><nail x="64" y="-64"/><nail x="64" y="-32"/></transition><transition><source ref="id14"/><target ref="id13"/><label kind="select" x="-152" y="-128">i: int[0, candidates-1]</label><label kind="assignment" x="-48" y="-112">c = i</label></transition></template><system>// Place template instantiations here.
+
+// List one or more processes to be composed into a system.
+system Authority, Voter, Coercer;</system></nta>

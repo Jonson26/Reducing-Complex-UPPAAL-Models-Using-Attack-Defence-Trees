@@ -1,0 +1,149 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%Title:   Template 'Defense_System'.
+%%Creator: (Commercial) UPPAAL 4.0.15 rev. CB6BB307F6F681CB, November 2019
+%%Pages: 0
+%%BoundingBox: -117 -42 147 78
+%%EndComments
+
+% Basic coordinate transformation.
+0.5 0.5 scale
+
+% Move the origin.
+0 73 translate
+
+% Size of graphical elements.
+/vertex-radius 12 def
+/vertex-urgent-radius 5 def
+/vertex-commit-radius 5 def
+/vertex-init-radius 8 def
+/vertex-lw 1.2 def
+/edge-lw 1.0 def
+
+% Color setting of graphical elements.
+/black { 0 0 0 setrgbcolor } def
+/vertex-fill-col { 0.647 0.686 0.803 setrgbcolor} def
+/vertex-ol-col { black } def
+/urgent-ol-col { black } def
+/commit-ol-col { black } def
+/initial-ol-col { black } def
+/state-name-col { 0.549 0.2196 0.3882 setrgbcolor } def
+/inv-col { 0.6549 0.2588 0.6588 setrgbcolor } def
+/select-col { 0.6392 0.6588 0.2588 setrgbcolor } def
+/guard-col { 0.2588 0.6588 0.2824 setrgbcolor } def
+/sync-col { 0.2588 0.6275 0.6588 setrgbcolor } def
+/assign-col { 0.2588 0.2588 0.6588 setrgbcolor } def
+/trans-col { black } def
+
+% Draw (filled) vertex at given position.
+/vertex { 
+   2 copy
+   vertex-fill-col
+   newpath vertex-lw setlinewidth 
+   /vertex-radius load 0 360 arc fill
+   vertex-ol-col
+   /vertex-radius load 0 360 arc stroke
+} def
+
+% Mark vertex as urgent.
+/urgent { 
+   urgent-ol-col
+   newpath vertex-lw setlinewidth 
+   /vertex-urgent-radius load 150 30 arc stroke 
+} def
+
+% Mark vertex as committed.
+/commit { 
+   commit-ol-col
+   newpath vertex-lw setlinewidth 
+   /vertex-commit-radius load 50 310 arc stroke 
+} def
+
+% Mark vertex as initial.
+/initial { 
+   initial-ol-col
+   newpath vertex-lw setlinewidth 
+   /vertex-init-radius load 0 360 arc stroke 
+} def
+
+% Vertices.
+% Font used for vertex names and invariants.
+/Helvetica-Bold findfont 14 scalefont setfont
+-16 -144 vertex
+   -80 -134 moveto state-name-col (finished) show
+   0 -14 moveto inv-col () show
+-16 -48 vertex
+   -192 -46 moveto state-name-col (fake_tracker_processing) show
+   0 -14 moveto inv-col () show
+-16 48 vertex
+   -16 48 initial
+   -232 50 moveto state-name-col (coercion_notification_gathering) show
+   0 -14 moveto inv-col () show
+
+% Edges.
+% Font used for selects, guards, syncs and assigns.
+/Helvetica findfont 14 scalefont setfont
+newpath edge-lw setlinewidth
+   trans-col
+   -4.970259666442871 -43.27296829223633  moveto
+   30.808549689737298 -27.939192962266723 lineto
+   40.0 -24.0 40.0 -24.0 40.0 -34.0 curveto   40.0 -62.0 lineto
+   40.0 -72.0 40.0 -72.0 30.808549874791773 -68.06080660593953 curveto   -4.051114082336426 -53.120948791503906  lineto
+stroke
+newpath edge-lw setlinewidth
+   trans-col
+   3.8076066970825195 -59.304840087890625   moveto
+   -4.051114082336426 -53.120948791503906   lineto
+   5.846683502197266 -54.546993255615234   lineto
+stroke
+   0 -14 moveto select-col () show
+   48 -38 moveto guard-col (coerced > 0) show
+   48 -54 moveto sync-col (faketracker[coerced_table[coerced-1]]!) show
+   48 -70 moveto assign-col (coerced--) show
+newpath edge-lw setlinewidth
+   trans-col
+   -4.970259666442871 52.72703170776367  moveto
+   30.808549689737298 68.06080703773328 lineto
+   40.0 72.0 40.0 72.0 40.0 62.0 curveto   40.0 34.0 lineto
+   40.0 24.0 40.0 24.0 30.808549874791773 27.939193394060474 curveto   -4.051114082336426 42.879051208496094  lineto
+stroke
+newpath edge-lw setlinewidth
+   trans-col
+   3.8076066970825195 36.695159912109375   moveto
+   -4.051114082336426 42.879051208496094   lineto
+   5.846683502197266 41.453006744384766   lineto
+stroke
+   0 -14 moveto select-col () show
+   0 -14 moveto guard-col () show
+   48 58 moveto sync-col (notify_auth?) show
+   48 42 moveto assign-col (updatecoercion\(\)) show
+newpath edge-lw setlinewidth
+   trans-col
+   -16.0 -60.0   moveto
+   -16.0 -131.0   lineto
+stroke
+newpath edge-lw setlinewidth
+   trans-col
+   -13.411809921264648 -121.34074401855469   moveto
+   -16.0 -131.0   lineto
+   -18.58819007873535 -121.34074401855469   lineto
+stroke
+   0 -14 moveto select-col () show
+   -104 -94 moveto guard-col (coerced == 0) show
+   0 -14 moveto sync-col () show
+   0 -14 moveto assign-col () show
+newpath edge-lw setlinewidth
+   trans-col
+   -16.0 36.0   moveto
+   -16.0 -35.0   lineto
+stroke
+newpath edge-lw setlinewidth
+   trans-col
+   -13.411809921264648 -25.340742111206055   moveto
+   -16.0 -35.0   lineto
+   -18.58819007873535 -25.340742111206055   lineto
+stroke
+   0 -14 moveto select-col () show
+   0 -14 moveto guard-col () show
+   -76 1 moveto sync-col (vote_end?) show
+   0 -14 moveto assign-col () show
+%%EOF
